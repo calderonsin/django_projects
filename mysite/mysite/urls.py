@@ -33,8 +33,10 @@ urlpatterns = [
         {'document_root': SITE_ROOT, 'show_indexes': True},
         name='site_path'
     ),
-    path('', TemplateView.as_view(template_name='home/main.html')),
-    path("accounts/login/", auth_views.LoginView.as_view(template_name='registration/login.html',next_page='pruebatec:pruebatec'),name='login'),
+    #path('', TemplateView.as_view(template_name='home/main.html')),
+    path('', auth_views.LoginView.as_view(template_name='registration/login.html',next_page='pruebatec:pruebatec'),name='login'),
     path('accounts/',include('django.contrib.auth.urls')),
+    path('prueba',TemplateView.as_view(template_name = 'index.html'))
+
 
 ]
