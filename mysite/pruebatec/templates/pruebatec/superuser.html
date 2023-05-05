@@ -1,0 +1,22 @@
+{% block content %}
+  <h1>Update SuperUser Field</h1>
+  <p>button1: {{ user.button1 }}</p>
+  <p>button2: {{ user.button2 }}</p>
+  <p>login time in minutes: {{ user.logintime }}</p>
+
+
+
+<h1>User List</h1>
+    <ul>
+        {% for user in object_list %}
+            <li>{{ user.email }}</li>
+        {% endfor %}
+    </ul>
+
+
+  <form action="{% url 'pruebatec:logout' %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Logout</button>
+
+
+{% endblock %}

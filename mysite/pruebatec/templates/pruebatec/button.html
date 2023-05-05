@@ -1,0 +1,21 @@
+
+{% block content %}
+  <h1>Update User Field</h1>
+  <p>button1: {{ user.button1 }}</p>
+  <p>button2: {{ user.button2 }}</p>
+  <p>login time in minutes: {{ user.logintime }}</p>
+  <p>Superuser: {{ user.is_superuser }}</p>
+
+  <form method="post" action="{% url 'pruebatec:update_user_field' %}">
+    {% csrf_token %}
+
+    <button type="submit" name="action" value="increase_1">Increase by 1</button>
+    <button type="submit" name="action" value="increase_2">Increase by 2</button>
+
+  </form>
+
+  <form action="{% url 'pruebatec:logout' %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Logout</button>
+</form>
+{% endblock %}
