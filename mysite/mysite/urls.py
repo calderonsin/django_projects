@@ -19,10 +19,30 @@ from django.urls import include, path, re_path
 from django.views.static import serve
 from django.views.generic import TemplateView
 from django.contrib.auth import views as auth_views
+from rest_framework import routers, serializers, viewsets
+from pruebatec.models import User
+
 
 # Up two folders to serve "site" content
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE_ROOT = os.path.join(BASE_DIR, 'mysite')
+
+
+# Serializers define the API representation.
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ['url', 'username', 'email', 'is_staff']
+
+# ViewSets define the view behavior.
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+# Routers provide an easy way of automatically determining the URL conf.
+router = routers.DefaultRouter()
+router.register(r'users', UserViewSet)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -34,7 +54,9 @@ urlpatterns = [
         name='site_path'
     ),
     #path('', TemplateView.as_view(template_name='home/main.html')),
-    path('', auth_views.LoginView.as_view(template_name='registration/login.html',next_page='pruebatec:pruebatec'),name='login'),
+    path('', include(router.urls)),
+    #path('', auth_views.LoginView.as_view(template_name='registration/login.html',next_page='pruebatec:pruebatec'),name='login'),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('accounts/',include('django.contrib.auth.urls')),
     path('prueba',TemplateView.as_view(template_name = 'index.html'))
 

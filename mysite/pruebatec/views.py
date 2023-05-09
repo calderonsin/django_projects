@@ -7,6 +7,12 @@ from django.views import generic
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from .models import User
+from rest_framework.decorators import api_view, authentication_classes
+from rest_framework.authentication import BasicAuthentication
+from rest_framework.response import Response
+from rest_framework import viewsets
+from rest_framework import permissions
+from .serializers import UserSerializer
 # Create your views here.
 
 class Defaultview(generic.TemplateView):
@@ -17,13 +23,23 @@ class Defaultview(generic.TemplateView):
             return redirect('pruebatec:userListView')
 
 
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = User.objects.all().order_by('-date_joined')
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+@api_view(['GET'])
+@authentication_classes([BasicAuthentication])
 class UserListView(ListView):
     model = User
     template_name = 'pruebatec/superuser.html'
     def get_queryset(self):
         return User.objects.filter(is_superuser=False)
 
-@login_required
+@authentication_classes([BasicAuthentication])
 def update_user_field(request):
     user = request.user
     context = {'user': user}
@@ -39,7 +55,7 @@ def update_user_field(request):
     return render(request, 'pruebatec/button.html',context)
 
 
-@login_required
+@authentication_classes([BasicAuthentication])
 def logout_view(request):
     logout(request)
     return redirect('login')
