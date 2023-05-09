@@ -59,10 +59,17 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = User.objects.all().order_by('-date_joined')
+    #queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
     #authentication_classes = []
+
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return User.objects.all().order_by('-date_joined')
+        else:
+            return User.objects.filter(pk=self.request.user.pk)
+
 
     def handle_exception(self, exc):
         if isinstance(exc, PermissionDenied):
@@ -80,7 +87,6 @@ class UserViewSet(viewsets.ModelViewSet):
         if not request.user.is_superuser:
             PermissionDenied()
         return super().create(request, *args, **kwargs)
-
 
 class LogoutView(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
