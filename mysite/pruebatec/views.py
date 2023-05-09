@@ -8,11 +8,11 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from .models import User
 from rest_framework.decorators import api_view, authentication_classes
-from rest_framework.authentication import BasicAuthentication
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
-from rest_framework import viewsets
-from rest_framework import permissions
+from rest_framework import viewsets,permissions,status,views
 from .serializers import UserSerializer
+from rest_framework.exceptions import PermissionDenied
 # Create your views here.
 """"
 class Defaultview(generic.TemplateView):
@@ -62,4 +62,29 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
+    #authentication_classes = []
 
+    def handle_exception(self, exc):
+        if isinstance(exc, PermissionDenied):
+            return Response({'detail': 'You do not have permission to perform this action.'}, status=status.HTTP_403_FORBIDDEN)
+        return super().handle_exception(exc)
+
+    def get_permissions(self):
+            if self.action == 'create':
+                permission_classes = [permissions.IsAdminUser]
+            else:
+                permission_classes = [permissions.IsAuthenticated]
+            return [permission() for permission in permission_classes]
+    
+    def create(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            PermissionDenied()
+        return super().create(request, *args, **kwargs)
+
+
+class LogoutView(views.APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def post(self, request, *args, **kwargs):
+        # Delete the token associated with the user
+        SessionAuthentication.logout(request)
+        return Response(status=status.HTTP_204_NO_CONTENT)
