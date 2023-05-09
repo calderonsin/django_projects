@@ -7,3 +7,4 @@ class User(AbstractUser):
     button1 = models.PositiveIntegerField(default=0)
     button2 = models.PositiveIntegerField(default=0)
 
+

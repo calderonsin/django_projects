@@ -14,7 +14,7 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer
 # Create your views here.
-
+""""
 class Defaultview(generic.TemplateView):
     template_name = 'pruebatec/button.html'
     def get(self, request, *args, **kwargs):
@@ -23,13 +23,7 @@ class Defaultview(generic.TemplateView):
             return redirect('pruebatec:userListView')
 
 
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-    queryset = User.objects.all().order_by('-date_joined')
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+
 
 @api_view(['GET'])
 @authentication_classes([BasicAuthentication])
@@ -59,3 +53,13 @@ def update_user_field(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+"""
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = User.objects.all().order_by('-date_joined')
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+

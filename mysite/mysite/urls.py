@@ -39,9 +39,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-# Routers provide an easy way of automatically determining the URL conf.
-router = routers.DefaultRouter()
-router.register(r'users', UserViewSet)
+
 
 
 urlpatterns = [
@@ -54,11 +52,10 @@ urlpatterns = [
         name='site_path'
     ),
     #path('', TemplateView.as_view(template_name='home/main.html')),
-    path('', include(router.urls)),
     #path('', auth_views.LoginView.as_view(template_name='registration/login.html',next_page='pruebatec:pruebatec'),name='login'),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('accounts/',include('django.contrib.auth.urls')),
-    path('prueba',TemplateView.as_view(template_name = 'index.html'))
+    #path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    #path('accounts/',include('django.contrib.auth.urls')),
+    #path('prueba',TemplateView.as_view(template_name = 'index.html'))
 
 
 ]
