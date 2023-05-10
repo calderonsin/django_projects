@@ -157,5 +157,6 @@ WEBPACK_LOADER = {
 
 #cors authorization
 CORS_ALLOWED_ORIGINS =[
+    "http://localhost:5173"
 
 ]
