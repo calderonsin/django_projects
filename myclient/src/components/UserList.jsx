@@ -1,15 +1,30 @@
 import { useEffect,useState } from "react"
 import {getAllUsers} from '../api/user.api'
-import { UserCard } from "./UserCard";
+import { UserTable } from "./UserTable";
+import { useNavigate} from 'react-router-dom';
 export function UserList(){
     const [users,setUsers] = useState([])
+    const navigate = useNavigate();
 
     useEffect(()=>{
 
         async function loadTasks(){
-            const res = await getAllUsers()
-            setUsers(res.data)
-            console.log(res)
+            await getAllUsers().then((res)=> {
+                setUsers(res.data)
+                //console.log(res)
+
+
+            })
+            .catch((error=>{
+                if(error.response.status ==401){
+
+                    navigate('/login');
+                }
+                console.log(error.response)
+                
+            }))
+            
+            
 
         }
         loadTasks()        
@@ -17,11 +32,7 @@ export function UserList(){
     } ,[]);
     return(
         <div>
-            {users.map(user =>(    
-                <UserCard key = {user.id} user = {user}/>                
-
-            )           
-                )}
+             <UserTable users = {users}/>
         </div>
     )
 }
