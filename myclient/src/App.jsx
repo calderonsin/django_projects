@@ -1,7 +1,7 @@
 import { React } from 'react';
 import {BrowserRouter,Routes,Route,Navigate} from 'react-router-dom';
 import {UserPage} from './pages/UserPage';
-import {UserFormPage} from './pages/UserFormPage';
+import {UserLandingPage} from './pages/UserLandingPage';
 import {LoginPage} from './pages/LoginPage';
 import { Navigation } from './components/Navigation';
 import reactLogo from './assets/react.svg'
@@ -16,7 +16,7 @@ function App() {
     <Routes>
       <Route path= "/" element ={<Navigate to= "/login"/>}/>
       <Route path= "/user" element ={<UserPage/>}/>
-      <Route path= "/user-create" element ={<UserFormPage/>}/>
+      <Route path= "/user-landing" element ={<UserLandingPage/>}/>
       <Route path= "/login" element ={<LoginPage/>}/>
     </Routes>
     </BrowserRouter>

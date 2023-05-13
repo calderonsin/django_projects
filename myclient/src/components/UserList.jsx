@@ -2,30 +2,17 @@ import { useEffect,useState } from "react"
 import {getAllUsers} from '../api/user.api'
 import { UserTable } from "./UserTable";
 import { useNavigate} from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 export function UserList(){
     const [users,setUsers] = useState([])
     const navigate = useNavigate();
+    const location = useLocation();
+    const data = location.state;
 
     useEffect(()=>{
 
         async function loadTasks(){
-            await getAllUsers().then((res)=> {
-                setUsers(res.data)
-                //console.log(res)
-
-
-            })
-            .catch((error=>{
-                if(error.response.status ==401){
-
-                    navigate('/login');
-                }
-                console.log(error.response)
-                
-            }))
-            
-            
-
+            setUsers(data.data)
         }
         loadTasks()        
 

@@ -7,12 +7,14 @@ from django.views import generic
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from .models import User
-from rest_framework.decorators import api_view, authentication_classes
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.decorators import api_view, authentication_classes,action
+from rest_framework.authentication import BasicAuthentication
 from rest_framework.response import Response
 from rest_framework import viewsets,permissions,status,views
 from .serializers import UserSerializer
+from rest_framework.views import APIView
 from rest_framework.exceptions import PermissionDenied
+from django.utils import timezone
 # Create your views here.
 """"
 class Defaultview(generic.TemplateView):
@@ -55,6 +57,26 @@ def logout_view(request):
     return redirect('login')
 
 """
+
+@authentication_classes([BasicAuthentication])
+class Button1View(APIView):
+    def patch(self, request):
+        obj = User.objects.get(pk=request.data['id'])
+        obj.button1 += 1
+        obj.save()
+        serializer = UserSerializer(obj)
+        return Response(serializer.data)
+    
+@authentication_classes([BasicAuthentication])
+class Button2View(APIView):
+    def patch(self, request):
+        obj = User.objects.get(pk=request.data['id'])
+        obj.button2 += 1
+        obj.save()
+        serializer = UserSerializer(obj)
+        return Response(serializer.data)
+    
+
 class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -62,6 +84,7 @@ class UserViewSet(viewsets.ModelViewSet):
     #queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
+    #allowed_methods = ['get', 'patch','post']
     #authentication_classes = []
 
     def get_queryset(self):
@@ -86,11 +109,27 @@ class UserViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         if not request.user.is_superuser:
             PermissionDenied()
-        return super().create(request, *args, **kwargs)
+        return super().create(request, *args, **kwargs)    
 
-class LogoutView(views.APIView):
-    permission_classes = [permissions.IsAuthenticated]
-    def post(self, request, *args, **kwargs):
+    
+    def partial_update(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        instance = self.get_object()
+        instance.last_login = timezone.now()  # Update the lastlogin field
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        print("estuve aquí")
+        return Response(serializer.data)
+
+@authentication_classes([BasicAuthentication])
+class LogoutView(views.APIView):   
+    def patch(self, request, *args, **kwargs):
+        obj = User.objects.get(pk=request.data['id'])        
+        current_time = timezone.now()
+        timedelta = current_time - obj.last_login
+        obj.logintime = obj.logintime +(timedelta.total_seconds()/60)
+        obj.save()
+        serializer = UserSerializer(obj)
+        return Response(status=status.HTTP_200_OK)
         # Delete the token associated with the user
-        SessionAuthentication.logout(request)
-        return Response(status=status.HTTP_204_NO_CONTENT)
