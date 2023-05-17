@@ -10,14 +10,14 @@ export function LoginForm() {
     event.preventDefault();
     try {
       
-      const response = await getAllUsers({ username}, {password});
-      const data = {data:response.data}
-      console.log(data.length)
-      if(response.data.length == 1){
-        navigate('/user-landing',{state:data});        
+      const response = await getAllUsers({ username}, {password});       
+      
+      if(response.data.length == 1){        
+        await Login(response.data[0],{password});
+        navigate('/user-landing',{state:[response.data,{password}]});        
 
       }
-      else{navigate('/user',{state:data}); }
+      else{navigate('/user',{state:response.data}); }
 
       
       // Redirect to a success page or perform any other logic here

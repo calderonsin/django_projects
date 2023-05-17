@@ -30,16 +30,20 @@ export const getAllUsers = (username,password) => {
 
 }
 
-export const Login= (data) => {
+export const Login= (data,password) => {    
+    console.log(password.password)
     url = 'http://127.0.0.1:8000/pruebatec/api/v0/users/' + data.id + '/';
-    const fields ={}   
+    console.log(url)
+    const fields ={
+        
+    }   
     return   axios.patch(url,fields,{auth:{
         username:data.username,
-        password:data.password
+        password:password.password
     }})
     .then(response=>{
         
-        console.log('respuesta correcta en user.api');
+        console.log('respuesta correcta en login.user.api');
         return response;
         
     })
@@ -51,16 +55,17 @@ export const Login= (data) => {
 }
 
 export const UpdateButton1 = (data)=>{
+    console.log(data)
     url = 'http://127.0.0.1:8000/pruebatec/api/v0/button1/';
-    const fields ={id:data.id}
+    const fields ={id:data[0][0].id}
     return   axios.patch(url,fields,{auth:{
-        username:data.username,
-        password:data.password
+        username:data[0][0].username,
+        password:data[1].password
 
     }})
     .then(response=>{
         
-        console.log('button1 increment on user with pk '+PK);
+        console.log('button1 increment on user with pk '+ data[0][0].id);
         return response;
         
     })
@@ -72,16 +77,16 @@ export const UpdateButton1 = (data)=>{
 
 }
 
-export const UpdateButton2 = (PK)=>{
+export const UpdateButton2 = (data)=>{
     url = 'http://127.0.0.1:8000/pruebatec/api/v0/button2/';
-    const fields ={id:data.id}
+    const fields ={id:data[0][0].id}
     return   axios.patch(url,fields,{auth:{
-        username:data.username,
-        password:data.password
+        username:data[0][0].username,
+        password:data[1].password
     }})
     .then(response=>{
         
-        console.log('button2 increment on user with pk '+PK);
+        console.log('button2 increment on user with pk '+ data[0][0].id);
         return response;
         
     })

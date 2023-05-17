@@ -6,13 +6,13 @@ function ButtonsComponent() {
   const data = location.state;
   const handleClick = async (button) => {
     event.preventDefault();    
-    console.log(`You clicked the ${button} button.`);
+    //console.log(`You clicked the ${button} button.`);
     if (button == 'first'){
 
-        await UpdateButton1(data.data);
+        await UpdateButton1(data);
     }
     else{
-        await UpdateButton2(data.data);
+        await UpdateButton2(data);
 
     }
   };
