@@ -31,7 +31,7 @@ export const getAllUsers = (username,password) => {
 }
 
 export const Login= (data,password) => {    
-    console.log(password.password)
+    //console.log(password.password)
     url = 'http://127.0.0.1:8000/pruebatec/api/v0/users/' + data.id + '/';
     console.log(url)
     const fields ={
@@ -98,9 +98,10 @@ export const UpdateButton2 = (data)=>{
 }
 
 export const Logout= (data) => {    
-    url = 'http://127.0.0.1:8000/pruebatec/api/v0/users/' + data.variable1[0].id + '/';
+    url = 'http://127.0.0.1:8000/pruebatec/api/v0/logout/';
     console.log(url)
     const fields ={
+        id: data.variable1[0].id
         
     }   
     return   axios.patch(url,fields,{auth:{

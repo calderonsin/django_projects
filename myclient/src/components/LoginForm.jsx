@@ -24,10 +24,6 @@ export function LoginForm() {
 
       }
       else{
-        
-        //console.log(response.data)
-        
-       
         navigate('/user',{state:stateData}); 
 
       }

@@ -129,7 +129,6 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
-        print("estuve aquí")
         return Response(serializer.data)
 
 @authentication_classes([BasicAuthentication])
