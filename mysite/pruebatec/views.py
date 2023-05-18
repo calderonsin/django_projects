@@ -15,6 +15,9 @@ from .serializers import UserSerializer
 from rest_framework.views import APIView
 from rest_framework.exceptions import PermissionDenied
 from django.utils import timezone
+from django.db.models import Case, When, F
+from django.db.models.functions import Now
+from django.db import models
 # Create your views here.
 """"
 class Defaultview(generic.TemplateView):
@@ -89,9 +92,16 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_superuser:
-            return User.objects.all().order_by('-date_joined')
+            resultquery = User.objects.annotate(
+                is_current_user=Case(
+                When(pk=self.request.user.pk, then=1),
+                default=0,
+                output_field=models.IntegerField())
+                ).order_by('-is_current_user', '-date_joined')
+            return resultquery
         else:
-            return User.objects.filter(pk=self.request.user.pk)
+            
+            return  User.objects.filter(pk=self.request.user.pk)
 
 
     def handle_exception(self, exc):
@@ -131,5 +141,5 @@ class LogoutView(views.APIView):
         obj.logintime = obj.logintime +(timedelta.total_seconds()/60)
         obj.save()
         serializer = UserSerializer(obj)
-        return Response(status=status.HTTP_200_OK)
+        return Response(serializer.data,status=status.HTTP_200_OK)
         # Delete the token associated with the user

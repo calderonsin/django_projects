@@ -55,17 +55,16 @@ export const Login= (data,password) => {
 }
 
 export const UpdateButton1 = (data)=>{
-    console.log(data)
     url = 'http://127.0.0.1:8000/pruebatec/api/v0/button1/';
-    const fields ={id:data[0][0].id}
+    const fields ={id:data.variable1[0].id}
     return   axios.patch(url,fields,{auth:{
-        username:data[0][0].username,
-        password:data[1].password
+        username:data.variable3.username,
+        password:data.variable2.password
 
     }})
     .then(response=>{
         
-        console.log('button1 increment on user with pk '+ data[0][0].id);
+        console.log('button1 increment on user with pk '+ data.variable1[0].id);
         return response;
         
     })
@@ -79,14 +78,14 @@ export const UpdateButton1 = (data)=>{
 
 export const UpdateButton2 = (data)=>{
     url = 'http://127.0.0.1:8000/pruebatec/api/v0/button2/';
-    const fields ={id:data[0][0].id}
+    const fields ={id:data.variable1[0].id}
     return   axios.patch(url,fields,{auth:{
-        username:data[0][0].username,
-        password:data[1].password
+        username:data.variable3.username,
+        password:data.variable2.password
     }})
     .then(response=>{
         
-        console.log('button2 increment on user with pk '+ data[0][0].id);
+        console.log('button2 increment on user with pk '+ data.variable1[0].id);
         return response;
         
     })
@@ -95,5 +94,28 @@ export const UpdateButton2 = (data)=>{
     })
 
 
+
+}
+
+export const Logout= (data) => {    
+    url = 'http://127.0.0.1:8000/pruebatec/api/v0/users/' + data.variable1[0].id + '/';
+    console.log(url)
+    const fields ={
+        
+    }   
+    return   axios.patch(url,fields,{auth:{
+        username:data.variable3.username,
+        password:data.variable2.password
+    }})
+    .then(response=>{
+        
+        console.log('respuesta correcta en logout.user.api');
+        return response;
+        
+    })
+    .catch(error=>{
+        throw error
+    })
+    
 
 }

@@ -5,19 +5,32 @@ export function LoginForm() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+ 
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
       
-      const response = await getAllUsers({ username}, {password});       
+      const response = await getAllUsers({ username}, {password});
+      const stateData = {
+        variable1: response.data,
+        variable2: {password},
+        variable3:{username}
+      };  
       
       if(response.data.length == 1){        
         await Login(response.data[0],{password});
-        navigate('/user-landing',{state:[response.data,{password}]});        
+        navigate('/user-landing',{state:stateData});        
 
       }
-      else{navigate('/user',{state:response.data}); }
+      else{
+        
+        //console.log(response.data)
+        
+       
+        navigate('/user',{state:stateData}); 
+
+      }
 
       
       // Redirect to a success page or perform any other logic here

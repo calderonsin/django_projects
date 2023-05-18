@@ -12,7 +12,7 @@ import { UserList } from './components/UserList';
 function App() {
   return(
     <BrowserRouter>
-    <Navigation/>
+    
     <Routes>
       <Route path= "/" element ={<Navigate to= "/login"/>}/>
       <Route path= "/user" element ={<UserPage/>}/>
