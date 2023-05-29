@@ -7,7 +7,7 @@ export function UserList(){
     const navigate = useNavigate();
     const location = useLocation();
     const data = location.state.variable1;
-    console.log(data)
+
 
     useEffect(()=>{
 

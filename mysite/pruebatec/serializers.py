@@ -3,6 +3,7 @@ from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import make_password
+from rest_framework.authtoken.models import Token
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -10,6 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = '__all__'
     def create(self, validated_data):
+
         password = validated_data.pop('password')
         try:            
             validate_password(password)
@@ -17,7 +19,8 @@ class UserSerializer(serializers.ModelSerializer):
                         
         except ValidationError as err:
             raise serializers.ValidationError({'password':err.messages})
-        user = User.objects.create(username = validated_data['username'],password= validated_data['password'])     
+        user = User.objects.create(username = validated_data['username'],password= validated_data['password'])
+        Token.objects.create(user=user)     
         return user
 
     

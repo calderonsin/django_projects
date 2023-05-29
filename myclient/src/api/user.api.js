@@ -7,19 +7,19 @@ import axios from 'axios';
 var url = '';
 
 
-export const getAllUsers = (username,password) => {
+export const getAllUsers = (token) => {
+    const config = {
+        headers: { Authorization: `Token ${token}` }
+    };
+    //console.log(config)
+
     url = 'http://127.0.0.1:8000/pruebatec/api/v0/users/';
     //console.log(url)
-    console.log(username.username)
-    console.log(password.password)    
-    return axios.get(url,{
-        auth:{
-        username: username.username,
-        password: password.password
-    }})
+      
+    return axios.get(url,config)
     .then(response=>{
         
-        console.log('respuesta correcta en user.api');
+        //console.log('respuesta correcta en user.api');
         return response;
         
     })
@@ -30,20 +30,18 @@ export const getAllUsers = (username,password) => {
 
 }
 
-export const Login= (data,password) => {    
-    //console.log(password.password)
-    url = 'http://127.0.0.1:8000/pruebatec/api/v0/users/' + data.id + '/';
-    console.log(url)
+export const Login= (username,password) => {    
+    url = 'http://127.0.0.1:8000/pruebatec/api/v0/token/';
+    //console.log(url)
     const fields ={
+        username:username.username,
+        password:password.password
         
     }   
-    return   axios.patch(url,fields,{auth:{
-        username:data.username,
-        password:password.password
-    }})
+    return   axios.post(url,fields)
     .then(response=>{
         
-        console.log('respuesta correcta en login.user.api');
+        //console.log(response);
         return response;
         
     })
@@ -56,15 +54,15 @@ export const Login= (data,password) => {
 
 export const UpdateButton1 = (data)=>{
     url = 'http://127.0.0.1:8000/pruebatec/api/v0/button1/';
+    const token = data.variable2;
+    const config = {
+        headers: { Authorization: `Token ${token}` }
+    };
     const fields ={id:data.variable1[0].id}
-    return   axios.patch(url,fields,{auth:{
-        username:data.variable3.username,
-        password:data.variable2.password
-
-    }})
+    return   axios.patch(url,fields,config)
     .then(response=>{
         
-        console.log('button1 increment on user with pk '+ data.variable1[0].id);
+        //console.log('button1 increment on user with pk '+ data.variable1[0].id);
         return response;
         
     })
@@ -77,15 +75,16 @@ export const UpdateButton1 = (data)=>{
 }
 
 export const UpdateButton2 = (data)=>{
+    const token = data.variable2;
     url = 'http://127.0.0.1:8000/pruebatec/api/v0/button2/';
-    const fields ={id:data.variable1[0].id}
-    return   axios.patch(url,fields,{auth:{
-        username:data.variable3.username,
-        password:data.variable2.password
-    }})
+    const config = {
+        headers: { Authorization: `Token ${token}` }
+    };
+    const fields ={id:data.variable1[0].id};
+    return   axios.patch(url,fields,config)
     .then(response=>{
         
-        console.log('button2 increment on user with pk '+ data.variable1[0].id);
+        //console.log('button2 increment on user with pk '+ data.variable1[0].id);
         return response;
         
     })
@@ -97,20 +96,21 @@ export const UpdateButton2 = (data)=>{
 
 }
 
-export const Logout= (data) => {    
+export const Logout= (data) => { 
+    const token = data.variable2;
     url = 'http://127.0.0.1:8000/pruebatec/api/v0/logout/';
-    console.log(url)
+    const config = {
+        headers: { Authorization: `Token ${token}` }
+    };
+    //console.log(url)
     const fields ={
         id: data.variable1[0].id
         
     }   
-    return   axios.patch(url,fields,{auth:{
-        username:data.variable3.username,
-        password:data.variable2.password
-    }})
+    return   axios.patch(url,fields,config)
     .then(response=>{
         
-        console.log('respuesta correcta en logout.user.api');
+        //console.log('respuesta correcta en logout.user.api');
         return response;
         
     })

@@ -4,11 +4,11 @@ from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
 from django.views.generic import TemplateView, ListView
 from django.views import generic
-from django.contrib.auth import logout
+from django.contrib.auth import logout,authenticate
 from django.contrib.auth.decorators import login_required
 from .models import User
 from rest_framework.decorators import api_view, authentication_classes,action
-from rest_framework.authentication import BasicAuthentication
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
 from rest_framework import viewsets,permissions,status,views
 from .serializers import UserSerializer
@@ -18,51 +18,13 @@ from django.utils import timezone
 from django.db.models import Case, When, F
 from django.db.models.functions import Now
 from django.db import models
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
 # Create your views here.
-""""
-class Defaultview(generic.TemplateView):
-    template_name = 'pruebatec/button.html'
-    def get(self, request, *args, **kwargs):
-        user = request.user
-        if user.is_superuser == True:
-            return redirect('pruebatec:userListView')
 
 
-
-
-@api_view(['GET'])
-@authentication_classes([BasicAuthentication])
-class UserListView(ListView):
-    model = User
-    template_name = 'pruebatec/superuser.html'
-    def get_queryset(self):
-        return User.objects.filter(is_superuser=False)
-
-@authentication_classes([BasicAuthentication])
-def update_user_field(request):
-    user = request.user
-    context = {'user': user}
-    if request.method == 'POST':
-        action = request.POST.get('action')
-        if action == 'increase_1':
-            user.button1 += 1
-        elif action == 'increase_2':
-            user.button2 += 1
-        user.save()
-        return redirect('pruebatec:update_user_field')
-
-    return render(request, 'pruebatec/button.html',context)
-
-
-@authentication_classes([BasicAuthentication])
-def logout_view(request):
-    logout(request)
-    return redirect('login')
-
-"""
-
-@authentication_classes([BasicAuthentication])
 class Button1View(APIView):
+    authentication_classes = [TokenAuthentication]
     def patch(self, request):
         obj = User.objects.get(pk=request.data['id'])
         obj.button1 += 1
@@ -70,8 +32,9 @@ class Button1View(APIView):
         serializer = UserSerializer(obj)
         return Response(serializer.data)
     
-@authentication_classes([BasicAuthentication])
+
 class Button2View(APIView):
+    authentication_classes = [TokenAuthentication]
     def patch(self, request):
         obj = User.objects.get(pk=request.data['id'])
         obj.button2 += 1
@@ -81,14 +44,15 @@ class Button2View(APIView):
     
 
 class UserViewSet(viewsets.ModelViewSet):
+    
     """
     API endpoint that allows users to be viewed or edited.
     """
     #queryset = User.objects.all().order_by('-date_joined')
+    authentication_classes = [TokenAuthentication]
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
-    #allowed_methods = ['get', 'patch','post']
-    #authentication_classes = []
+    
 
     def get_queryset(self):
         if self.request.user.is_superuser:
@@ -131,8 +95,8 @@ class UserViewSet(viewsets.ModelViewSet):
         self.perform_update(serializer)
         return Response(serializer.data)
 
-@authentication_classes([BasicAuthentication])
-class LogoutView(views.APIView):   
+class LogoutView(views.APIView):
+    authentication_classes = [TokenAuthentication]
     def patch(self, request, *args, **kwargs):
         obj = User.objects.get(pk=request.data['id'])        
         current_time = timezone.now()
@@ -142,3 +106,35 @@ class LogoutView(views.APIView):
         serializer = UserSerializer(obj)
         return Response(serializer.data,status=status.HTTP_200_OK)
         # Delete the token associated with the user
+
+class LoginView(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        response = super().post(request,*args, **kwargs)
+        if response.status_code == 200:
+            user = User.objects.filter(username=request.data['username']).first()
+            #serializer = UserSerializer(user)
+            data ={
+                'username':user.username,
+                'password':user.password,
+                'last_login': timezone.now()
+            }
+            #user.last_login = timezone.now()  # Update the lastlogin field
+            serializer = UserSerializer(user, data=data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return response
+            # Retrieve the token from the response
+            
+            
+            #token = Token.objects.get(user=request.data['username'])
+
+            # Perform extra steps or modifications here
+
+            # Add custom data to the response
+            
+        #user = authenticate(email= email,password=password)        
+        
+        #return response
+
+#ya tengo el token en response, debo obtener el usuario con el token
+#usando Token de authtoken.models

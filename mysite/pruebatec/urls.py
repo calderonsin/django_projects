@@ -2,12 +2,14 @@ from django.urls import include,path
 from . import views
 from django.views.generic import TemplateView
 from rest_framework import routers
+from rest_framework.authtoken.views import obtain_auth_token
 
 app_name = 'pruebatec'
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet,'users')
 urlpatterns = [
+    path('api/v0/token/',views.LoginView.as_view(),name='login'),
     path('api/v0/', include(router.urls)),
     path('api/v0/button1/', views.Button1View.as_view(), name='increment_button1'),
     path('api/v0/button2/', views.Button2View.as_view(), name='increment_button1'),

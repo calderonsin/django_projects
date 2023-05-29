@@ -10,23 +10,31 @@ export function LoginForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      
-      const response = await getAllUsers({ username}, {password});
-      const stateData = {
-        variable1: response.data,
-        variable2: {password},
-        variable3:{username}
-      };  
-      
-      if(response.data.length == 1){        
-        await Login(response.data[0],{password});
-        navigate('/user-landing',{state:stateData});        
+      const response_login = await Login({ username}, {password});
+      if(response_login.status==200){
+        //console.log(response_login.data.token);
+        const token =response_login.data.token;
+        const response = await getAllUsers(token);
+        const stateData = {
+          variable1: response.data,
+          variable2: token,
+        };  
+
+        if(response.data.length == 1){        
+          await Login(response.data[0],{password});
+          navigate('/user-landing',{state:stateData});        
+  
+        }
+        else{
+          navigate('/user',{state:stateData}); 
+  
+        }
+
 
       }
-      else{
-        navigate('/user',{state:stateData}); 
-
-      }
+      
+      
+      
 
       
       // Redirect to a success page or perform any other logic here
@@ -35,7 +43,7 @@ export function LoginForm() {
         //console.log('Unauthorized access');
         // Display an error message or perform any other logic here
       } else {
-        console.log('An error occurred:', error.message);
+        //console.log('An error occurred:', error.message);
       }
     }
   };
@@ -55,7 +63,7 @@ export function LoginForm() {
         <label htmlFor="password">Password:</label>
         <input
           id="password"
-          type="text"
+          type="password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
         />

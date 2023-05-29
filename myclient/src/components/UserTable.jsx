@@ -5,7 +5,7 @@ export function UserTable({users}){
       <thead>
         <tr>
           <th>Username</th>
-          <th>Login time</th>
+          <th>Login time(Minutes)</th>
           <th>Button1</th>
           <th>Button2</th>
         </tr>
